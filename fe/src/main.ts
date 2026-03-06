@@ -1,6 +1,14 @@
-import './assets/main.css'
-
 import { createApp } from 'vue'
+import { createPinia } from 'pinia' //
+import './assets/main.css' 
 import App from './App.vue'
+import router from './Router'
+import "@fortawesome/fontawesome-free/css/all.min.css"
+import axios from 'axios';
 
-createApp(App).mount('#app')
+const app = createApp(App)
+const pinia = createPinia() // Inisialisasi Pinia
+
+app.use(pinia) // Gunakan Pinia sebelum mount
+app.use(router)
+app.mount('#app')
