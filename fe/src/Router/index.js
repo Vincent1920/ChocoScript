@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/Home.vue'
+import LoginView from '../Auth/LoginView.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  // Baris di bawah ini yang paling penting untuk memperbaiki error merah tadi
+  history: createWebHistory(import.meta.env.BASE_URL), 
   routes: [
     {
       path: '/',
@@ -12,8 +14,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      // Mengarah ke folder Auth sesuai strukturmu
-      // component: () => import('../Auth/LoginView.vue') 
+      component: LoginView 
     }
   ]
 })
