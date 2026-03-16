@@ -58,5 +58,14 @@ class User extends Authenticatable implements MustVerifyEmail // Tambahkan 'impl
     return $this->hasMany(CartItem::class);
 }
 
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 
 }

@@ -40,6 +40,10 @@ return [
         'driver' => 'session',
         'provider' => 'users',
     ],
+    'api' => [
+        'driver' => 'jwt', // Ganti 'sanctum' atau 'token' menjadi 'jwt'
+        'provider' => 'users',
+    ],
     // ... konfigurasi lain
 ],
 

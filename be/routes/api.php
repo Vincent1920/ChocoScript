@@ -16,6 +16,7 @@ use App\Http\Controllers\DiskonController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\AdminTransactionController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\AuthController;
 
 
 /*
@@ -50,6 +51,15 @@ Route::get('/midtrans-test', [PaymentController::class, 'testMidtrans']);
 | 2. AUTH: GUEST (Hanya untuk user yang BELUM login)
 |--------------------------------------------------------------------------
 */
+
+
+Route::post('login', [AuthController::class, 'login']);
+
+// Contoh route yang diproteksi
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [controller_login::class, 'view_login'])->name('login');
     Route::post('/login', [controller_login::class, 'login'])->name('postlogin');
