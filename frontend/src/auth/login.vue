@@ -1,109 +1,190 @@
+<template>
+  <div class="bg-[#FFE9DA] font-sans flex flex-col items-center justify-center min-h-screen relative overflow-x-hidden p-4">
+    <div 
+      class="bg-white rounded-[10px] shadow-2xl relative overflow-hidden w-[768px] max-w-full min-h-[480px] mt-20 transition-all duration-700 ease-in-out"
+      :class="{ 'right-panel-active': isRightPanelActive }"
+    >
+      
+      <div class="absolute top-0 left-0 w-1/2 h-full transition-all duration-700 ease-in-out opacity-0 z-[1] sign-up-container bg-white">
+        <form @submit.prevent="handleRegister" class="bg-white flex flex-col items-center justify-center h-full px-12 text-center">
+          <h1 class="font-bold text-3xl mb-2 text-[#e6c58c]">Create Account</h1>
+          <span class="text-xs text-[#e6c58c] mb-4">use your email for registration</span>
+          
+          <input v-model="registerData.name" type="text" placeholder="Name" class="auth-input" required />
+          <input v-model="registerData.username" type="text" placeholder="Username" class="auth-input" required />
+          <input v-model="registerData.email" type="email" placeholder="Email" class="auth-input" required />
+          <input v-model="registerData.password" type="password" placeholder="Password" class="auth-input" required />
+
+          <button type="submit" class="auth-btn mt-4" :disabled="authStore.loading">
+            {{ authStore.loading ? 'Signing Up...' : 'Sign Up' }}
+          </button>
+        </form>
+      </div>
+
+      <div class="absolute top-0 left-0 w-1/2 h-full transition-all duration-700 ease-in-out z-[2] sign-in-container bg-white">
+        <form @submit.prevent="handleLogin" class="bg-white flex flex-col items-center justify-center h-full px-12 text-center">
+          <h1 class="font-bold text-3xl mb-4 text-[#e6c58c]">Sign in</h1>
+          <span class="text-xs text-[#e6c58c] mb-4">or use your account</span>
+
+          <input v-model="loginData.email" type="email" placeholder="Email" class="auth-input" required />
+          <input v-model="loginData.password" type="password" placeholder="Password" class="auth-input" required />
+
+          <button type="submit" class="auth-btn mt-4" :disabled="authStore.loading">
+            {{ authStore.loading ? 'Logging In...' : 'Login' }}
+          </button>
+        </form>
+      </div>
+
+      <div class="absolute top-0 left-1/2 w-1/2 h-full overflow-hidden transition-transform duration-700 ease-in-out z-[100] overlay-container">
+        <div class="overlay bg-[#48311B] relative -left-full h-full w-[200%] transform translate-x-0 transition-transform duration-700 ease-in-out flex">
+          
+          <div 
+            class="overlay-panel overlay-left absolute flex flex-col items-center justify-center px-10 text-center top-0 h-full w-1/2 transition-transform duration-700 bg-cover bg-center"
+            style="background-image: url('/img/login/login3.jpg');"
+          >
+            <h1 class="font-bold text-3xl text-white drop-shadow-lg">Welcome Back!</h1>
+            <p class="text-sm font-light my-5 text-gray-100">To keep connected with us please login with your info</p>
+            <button @click="isRightPanelActive = false" class="ghost-btn">Login</button>
+          </div>
+
+          <div 
+            class="overlay-panel overlay-right absolute right-0 flex flex-col items-center justify-center px-10 text-center top-0 h-full w-1/2 transition-transform duration-700 bg-cover bg-center"
+            style="background-image: url('/img/login/login.png');"
+          >
+            <h1 class="font-bold text-3xl text-white drop-shadow-lg">Hello, Friend!</h1>
+            <p class="text-sm font-light my-5 text-gray-100">Enter your details and start your journey with us</p>
+            <button @click="isRightPanelActive = true" class="ghost-btn">Sign Up</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</template>
+
 <script setup>
-import { useAuthStore } from '../Stores/login'; // Hubungkan ke Store
+import { ref, reactive } from 'vue';
+import { useAuthStore } from '../stores/auth'; // Menggunakan file login.js di folder stores
+import { useRouter } from 'vue-router';
+import Swal from 'sweetalert2';
 
+// State Management
+const isRightPanelActive = ref(false);
 const authStore = useAuthStore();
+const router = useRouter();
 
+// Form Data
+const loginData = reactive({
+  email: '',
+  password: ''
+});
+
+const registerData = reactive({
+  name: '',
+  username: '',
+  email: '',
+  password: ''
+});
+
+// Handlers
 const handleLogin = async () => {
-  try {
-    // Panggil action yang ada di Store
-    await authStore.loginAction({ email: email.value, password: password.value });
-    
-    // Jika tidak ada error, pindah ke Home
+  const success = await authStore.loginAction(loginData);
+  if (success) {
+    Swal.fire({
+      icon: 'success',
+      title: 'Berhasil!',
+      text: 'Selamat datang di ChocoScript.',
+      confirmButtonColor: '#48311B'
+    });
     router.push('/');
-  } catch (err) {
-    alert("Login Gagal: " + err);
+  } else {
+    Swal.fire({
+      icon: 'error',
+      title: 'Gagal!',
+      text: authStore.error || 'Email atau Password salah.',
+      confirmButtonColor: '#d33'
+    });
+  }
+};
+
+const handleRegister = async () => {
+  // Pastikan registerAction sudah dibuat di store/login.js
+  const success = await authStore.registerAction(registerData);
+  if (success) {
+    Swal.fire({
+      icon: 'success',
+      title: 'Akun Terdaftar!',
+      text: 'Silakan login dengan akun baru Anda.',
+      confirmButtonColor: '#48311B'
+    });
+    isRightPanelActive.value = false; // Pindah ke panel login
+  } else {
+    Swal.fire({
+      icon: 'error',
+      title: 'Pendaftaran Gagal',
+      text: authStore.error,
+      confirmButtonColor: '#d33'
+    });
   }
 };
 </script>
 
-<template>
-  <div class="min-h-screen w-full flex flex-col items-center justify-center p-4 relative font-sans"
-       :style="{ backgroundImage: 'url(' + bgImage + ')' }"
-       style="background-size: cover; background-position: center;">
-    
-    <div class="absolute inset-0 bg-black/40 z-0"></div>
+<style scoped>
+/* Tailwind v4 Reference untuk menghindari error unknown utility class */
+@reference "../style.css";
 
-    <div class="absolute top-6 left-10 z-10 flex flex-col text-white">
-      <div class="flex items-center gap-2">
-        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="text-2xl font-bold tracking-tight">ClaylO</span>
-      </div>
-      <span class="text-xs mt-1 opacity-80">Studio</span>
-      <span class="text-[9px] mt-0.5 opacity-60">claylostudio.com</span>
-    </div>
+/* --- Logic Transisi Panel --- */
+.right-panel-active .sign-in-container {
+  transform: translateX(100%);
+}
 
-    <div class="relative z-10 w-full max-w-7xl flex flex-col md:flex-row items-center justify-between gap-12 px-6">
-      
-      <div class="flex-1 text-center md:text-left">
-        <h1 class="font-serif italic text-7xl md:text-9xl text-white font-black tracking-tighter shadow-xl">
-          Fret Shop
-        </h1>
-      </div>
+.right-panel-active .sign-up-container {
+  transform: translateX(100%);
+  opacity: 1;
+  z-index: 5;
+  animation: show 0.6s;
+}
 
-      <div class="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-10 shadow-2xl glass-morphism flex flex-col text-white">
-        
-        <div class="flex justify-between items-center mb-8">
-          <h2 class="text-3xl font-bold font-serif">Log In</h2>
-          <div class="text-sm opacity-80 flex gap-1 font-serif">
-            <span>Log In</span> / <span>Sign Up</span>
-          </div>
-        </div>
+.right-panel-active .overlay-container {
+  transform: translateX(-100%);
+}
 
-        <form @submit.prevent="handleLogin" class="space-y-5">
-          <div>
-            <label class="block text-sm font-medium mb-1.5 opacity-90" for="email">Email</label>
-            <input 
-              v-model="email"
-              type="email" 
-              id="email" 
-              class="w-full p-3 bg-white/20 border border-white/10 rounded-xl focus:ring-2 focus:ring-white/50 focus:border-white/30 transition outline-none" 
-              required
-            />
-          </div>
+.right-panel-active .overlay {
+  transform: translateX(50%);
+}
 
-          <div class="relative">
-            <label class="block text-sm font-medium mb-1.5 opacity-90" for="password">Password</label>
-            <input 
-              v-model="password"
-              type="password" 
-              id="password" 
-              class="w-full p-3 bg-white/20 border border-white/10 rounded-xl focus:ring-2 focus:ring-white/50 focus:border-white/30 transition outline-none" 
-              required
-            />
-            <a href="#" class="absolute right-0 top-0 text-xs mt-1 opacity-70 hover:opacity-100 font-serif">Forgot Password?</a>
-          </div>
+.right-panel-active .overlay-left {
+  transform: translateX(0);
+}
 
-          <div class="flex justify-end pt-2">
-            <button type="submit" class="bg-white text-black font-bold px-8 py-2.5 rounded-lg hover:bg-gray-200 transition duration-300 font-serif">
-              Log In
-            </button>
-          </div>
-        </form>
+.right-panel-active .overlay-right {
+  transform: translateX(20%);
+}
 
-        <div class="relative my-10 text-center">
-          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-white/20"></div></div>
-          <span class="relative bg-[#2a2a2a] px-3 text-xs opacity-60 font-serif">OR</span>
-        </div>
+@keyframes show {
+  0%, 49.99% { opacity: 0; z-index: 1; }
+  50%, 100% { opacity: 1; z-index: 5; }
+}
 
-        <div class="flex justify-center gap-6 mb-8">
-          <button class="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 border border-white/10 hover:bg-white/20 transition">
-            <svg class="w-6 h-6" viewBox="0 0 24 24"><path fill="currentColor" d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.18 1.137 15.41 0 12.24 0 5.466 0 0 5.466 0 12.24s5.466 12.24 12.24 12.24c7.069 0 11.79-4.951 11.79-11.964 0-.741-.06-1.309-.176-1.874H12.24z"/></svg>
-          </button>
-          <button class="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 border border-white/10 hover:bg-white/20 transition">
-            <svg class="w-6 h-6" viewBox="0 0 24 24"><path fill="currentColor" d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3h-2.5v6.8c4.56-.93 8-4.96 8-9.8z"/></svg>
-          </button>
-          <button class="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 border border-white/10 hover:bg-white/20 transition">
-            <svg class="w-5 h-5" viewBox="0 0 1200 1227"><path fill="currentColor" d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"/></svg>
-          </button>
-        </div>
+/* --- Reusable Components via @apply --- */
+.auth-input {
+  @apply bg-[#eee] border-none p-3 my-2 w-full outline-none transition-all focus:ring-1 focus:ring-[#e6c58c];
+}
 
-        <div class="text-center text-sm opacity-80 font-serif">
-          Don't have an account? <a href="#" class="font-bold underline hover:opacity-100">Sign up</a>
-        </div>
+.auth-btn {
+  @apply rounded-[20px] border border-[#f6d59e] bg-[#E8D5B5] text-[#432900] text-xs font-bold uppercase py-3 px-10 tracking-wider transition-transform active:scale-95 hover:bg-[#e0cba0] disabled:opacity-50 cursor-pointer;
+}
 
-      </div>
-    </div>
+.ghost-btn {
+  @apply rounded-full border-2 border-white bg-white/10 text-white text-sm font-bold uppercase py-3 px-12 tracking-widest transition-all backdrop-blur-md hover:bg-white hover:text-[#432900] active:scale-95 cursor-pointer;
+}
 
-  </div>
-</template>
+.overlay-left {
+  transform: translateX(-20%);
+}
 
+/* Fonts */
+.font-qwigley {
+  font-family: 'Qwigley', cursive;
+}
+</style>
