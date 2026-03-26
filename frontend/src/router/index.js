@@ -5,6 +5,7 @@ import shop from '../pages/shop/shop.vue'
 import ProductDetail from '../pages/shop/ProductDetail.vue'
 import cart from '../pages/cart/Cart.vue'
 import Checkout from '../pages/cart/Checkout.vue'
+import OrderList from '../pages/cart/OrderList.vue'
 
 
 const routes = [
@@ -37,6 +38,11 @@ const routes = [
   path: '/checkout',
   name: 'checkout',
   component: Checkout
+},
+{
+  path: '/orderList',
+  name: 'orderList',
+  component: OrderList
 }
 ]
 
