@@ -8,6 +8,8 @@ import Checkout from '../pages/cart/Checkout.vue'
 import OrderList from '../pages/cart/OrderList.vue'
 
 
+
+
 const routes = [
   {
     path: '/',
@@ -43,7 +45,29 @@ const routes = [
   path: '/orderList',
   name: 'orderList',
   component: OrderList
-}
+},
+
+{
+    path: '/admin',
+    meta: { requiresAuth: true, isAdmin: true },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'admin.dashboard',
+        component: AdminDashboard
+      },
+      {
+        path: 'products',
+        name: 'admin.products',
+        component: AdminProducts
+      },
+      {
+        path: 'categories',
+        name: 'admin.categories',
+        component: AdminCategories
+      }
+    ]
+  }
 ]
 
 const router = createRouter({
