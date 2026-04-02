@@ -10,7 +10,7 @@
             <p class="text-gray-500 text-sm">Kelola semua produk di toko Anda.</p>
         </div>
 
-        <a href="/creat"
+        <a href="/admin/barangs/create"
             class="group relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white transition-all duration-200 bg-choco rounded-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-choco shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
             <i class="bi bi-plus-lg mr-2 text-lg"></i>
             Tambah Barang

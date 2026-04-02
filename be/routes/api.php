@@ -53,22 +53,30 @@ Route::get('/midtrans-test', [PaymentController::class, 'testMidtrans']);
 */
 
 
-Route::post('login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-// Contoh route yang diproteksi
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// Route yang butuh login
+Route::middleware('auth:api')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-Route::middleware(['guest'])->group(function () {
-    Route::get('/login', [controller_login::class, 'view_login'])->name('login');
-    Route::post('/login', [controller_login::class, 'login'])->name('postlogin');
-    Route::post('/register', [RegisterController::class, 'register'])->name('register');
+// Route::post('login', [AuthController::class, 'login']);
+
+// // Contoh route yang diproteksi
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+// Route::middleware(['guest'])->group(function () {
+//     Route::get('/login', [controller_login::class, 'view_login'])->name('login');
+//     Route::post('/login', [controller_login::class, 'login'])->name('postlogin');
+//     Route::post('/register', [RegisterController::class, 'register'])->name('register');
     
-    // Lupa Password
-    Route::get('forgot_password', [controller_login::class, 'forgot_password'])->name('forgot_password');
-    Route::get('forgot-password/{token}', [controller_login::class, 'forgot_password']); 
-});
+//     // Lupa Password
+//     Route::get('forgot_password', [controller_login::class, 'forgot_password'])->name('forgot_password');
+//     Route::get('forgot-password/{token}', [controller_login::class, 'forgot_password']); 
+// });
 
 /*
 |--------------------------------------------------------------------------

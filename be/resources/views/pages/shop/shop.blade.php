@@ -138,7 +138,7 @@
                     <div
                         class="w-full flex-1 bg-[#F8DEC3] rounded-[2rem] border-4 border-white shadow-lg overflow-hidden relative z-20 group-hover:shadow-2xl transition-all duration-500 group-hover:bg-[#D19F9C]">
 
-                        <a href="{{ $isOutOfStock ? '#' : route('card.show', $barang->id) }}"
+                        <a href="{{ $isOutOfStock ? '#' : route('show.barang', $barang->id) }}"
                             class="block w-full h-full {{ $isOutOfStock ? 'cursor-not-allowed' : '' }}">
 
                             <img class="w-full h-full object-cover transition-all duration-700 

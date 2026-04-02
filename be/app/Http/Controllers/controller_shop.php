@@ -20,47 +20,44 @@ class controller_shop extends Controller
         ]);
     }
     
-    public function show($kategoriId)
-{  
-    // 1. Ambil kategori yang sedang dipilih (untuk konten utama)
-    $kategori = Kategori::findOrFail($kategoriId);
+   public function show($id) // Sesuaikan dengan {id} di Route
+{   
+    // 1. Ambil data barang spesifik yang diklik
+    // Gunakan eager loading 'kategori' agar bisa mengambil nama kategorinya jika perlu
+    $barang = Barang::with('kategori')->findOrFail($id);
     
-    // 2. Ambil semua kategori (untuk Sidebar agar tidak error "Undefined Variable")
+    // 2. Ambil semua kategori (untuk Sidebar di layout utama jika ada)
     $kategoris = Kategori::all(); 
 
-    // 3. Ambil barang berdasarkan kategori tersebut
-    $barangs = $kategori->barangs; 
-
-    return view('pages.shop.kategori', [
-        'barangs'   => $barangs,
-        'kategori'  => $kategori,
-        'kategoris' => $kategoris // Tambahkan ini agar @forelse di view tidak error
+    return view('pages.shop.card', [
+        'barang'    => $barang,    // Kirim satu objek barang
+        'kategoris' => $kategoris 
     ]);
 }
 
-public function showKategori(Kategori $kategori)
-{
-    return view('pages.shop.kategori', [
-        'kategori'  => $kategori,              // Kategori yang dipilih (Judul)
-        'kategoris' => Kategori::all(),        // List untuk Sidebar
-        'barangs'   => $kategori->barangs      // Produk yang sudah difilter
-    ]);
-}
-
-//     public function showKategori(Kategori $kategori)
+// public function showKategori(Kategori $kategori)
 // {
-//     // Ambil kategori untuk sidebar
-//     $kategoris = Kategori::all();
-
-//     // Ambil barang HANYA yang termasuk kategori yang dipilih
-//     // Menggunakan relasi yang dibuat di langkah 1
-//     $barangs = $kategori->barangs; 
-    
-//     // Ubah judul agar dinamis
-//     $judulHalaman = "Kategori: " . $kategori->nama_kategori;
-
-//     // Return ke View yang SAMA dengan data yang sudah difilter
-//     return view('', compact('kategoris', 'barangs', 'judulHalaman'));
+//     return view('pages.shop.kategori', [
+//         'kategori'  => $kategori,              // Kategori yang dipilih (Judul)
+//         'kategoris' => Kategori::all(),        // List untuk Sidebar
+//         'barangs'   => $kategori->barangs      // Produk yang sudah difilter
+//     ]);
 // }
+
+    public function showKategori(Kategori $kategori)
+{
+    // Ambil kategori untuk sidebar
+    $kategoris = Kategori::all();
+
+    // Ambil barang HANYA yang termasuk kategori yang dipilih
+    // Menggunakan relasi yang dibuat di langkah 1
+    $barangs = $kategori->barangs; 
+    
+    // Ubah judul agar dinamis
+    $judulHalaman = "Kategori: " . $kategori->nama_kategori;
+
+    // Return ke View yang SAMA dengan data yang sudah difilter
+    return view('', compact('kategoris', 'barangs', 'judulHalaman'));
+}
 
 }

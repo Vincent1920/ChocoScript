@@ -8,7 +8,7 @@
         <p class="text-sm text-gray-500 mt-1">Isi formulir di bawah untuk menambahkan produk baru.</p>
     </div>
 
-    <form method="post" action="/posts/store" class="space-y-6 mb-10" enctype="multipart/form-data">
+    <form method="post" action="/admin/barangs" class="space-y-6 mb-10" enctype="multipart/form-data">
         @csrf
 
         <div>

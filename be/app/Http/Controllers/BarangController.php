@@ -80,7 +80,7 @@ class BarangController extends Controller
         ]);
 
         // 4. Redirect Sukses
-        return redirect()->route('post')->with('success', 'Data barang berhasil ditambahkan.');
+        return redirect()->route('/admin/barangs')->with('success', 'Data barang berhasil ditambahkan.');
 
     } catch (\Exception $e) {
         // 5. Error Handling (Jika gagal simpan)

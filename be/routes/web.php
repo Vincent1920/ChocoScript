@@ -29,8 +29,8 @@ Route::get('/learn', [index::class, 'learn'])->name('learn');
 
 // Katalog Produk
 Route::get('/shop', [controller_shop::class, 'index'])->name('shop');
-Route::get('/kategori/{kategori_id}', [controller_shop::class, 'show'])->name('kategori.show');
-
+Route::get('/kategori/{kategori_id}', [controller_shop::class, 'showkategori'])->name('kategori.show');
+Route::get('/shop/{id}', [controller_shop::class, 'show'])->name('show.barang');
 // Testing Midtrans (Hapus jika sudah produksi)
 Route::get('/midtrans-test', [PaymentController::class, 'testMidtrans']);
 
@@ -104,7 +104,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
     Route::resource('barangs', BarangController::class);
     // Note: resource sudah mencakup index, create, store, show, edit, update, destroy
     // Rute manual di bawah ini bisa dihapus jika sudah pakai resource:
-    Route::post('/barangs/update/{barang}', [BarangController::class, 'update'])->name('barangs.manual_update');
+    Route::post('/barangs/update/{barang}', [BarangController::class, 'update'])->name('barangs');
 
     // Manajemen Kategori
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
